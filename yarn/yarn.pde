@@ -8,12 +8,13 @@ class Coordinate {
     this.x = x;
     this.y = y;
   }
-
-  public int get_x() { return x; }
-  public int get_y() { return y; }
   
-  public int get_tile_x() { return x * TILE_WIDTH; }
-  public int get_tile_y() { return y * TILE_HEIGHT; }
+  // tile
+  public int get_tile_x() { return x; }
+  public int get_tile_y() { return y; }
+  
+  public int get_global_x() { return x * TILE_WIDTH; }
+  public int get_global_y() { return y * TILE_HEIGHT; }
   
   public boolean equals(Object obj) {
     if (obj == null) return false;
@@ -21,8 +22,8 @@ class Coordinate {
     if (obj.getClass() != getClass()) return false;
     
     Coordinate other = (Coordinate) obj;
-    return this.get_x() == other.get_x() &&
-           this.get_y() == other.get_y();
+    return this.get_tile_x() == other.get_tile_x() &&
+           this.get_tile_y() == other.get_tile_y();
   }
 }
 
@@ -45,8 +46,8 @@ class Yarn {
   
   protected void drawBall() {
     fill(255);
-    int x = get_position().get_tile_x();
-    int y = get_position().get_tile_y();
+    int x = get_position().get_global_x();
+    int y = get_position().get_global_y();
     ellipse(x, y, 10, 10);  
   }
   
@@ -58,24 +59,24 @@ class Yarn {
       Coordinate curr = positions.get(i);
       
       stroke(255);
-      line(prev.get_tile_x(),
-           prev.get_tile_y(),
-           curr.get_tile_x(),
-           curr.get_tile_y());
+      line(prev.get_global_x(),
+           prev.get_global_y(),
+           curr.get_global_x(),
+           curr.get_global_y());
       
       prev = curr;
     }
   }
   
   public boolean valid_move(Coordinate from, Coordinate to) {
-    if (to.get_tile_x() < 0 ||
-        to.get_tile_y() < 0 ||
-        to.get_tile_x() > width ||
-        to.get_tile_y() > height) return false;
-    if (!((Math.abs(from.get_x() - to.get_x()) == 1 &&
-           Math.abs(from.get_y() - to.get_y()) == 0) ||
-          (Math.abs(from.get_x() - to.get_x()) == 0 &&
-           Math.abs(from.get_y() - to.get_y()) == 1))) return false;
+    if (to.get_global_x() < 0 ||
+        to.get_global_y() < 0 ||
+        to.get_global_x() > width ||
+        to.get_global_y() > height) return false;
+    if (!((Math.abs(from.get_tile_x() - to.get_tile_x()) == 1 &&
+           Math.abs(from.get_tile_y() - to.get_tile_y()) == 0) ||
+          (Math.abs(from.get_tile_x() - to.get_tile_x()) == 0 &&
+           Math.abs(from.get_tile_y() - to.get_tile_y()) == 1))) return false;
     // TODO: check tile openings in `from` and `to`
     
     return true;
@@ -93,8 +94,8 @@ class Yarn {
   }
   
   protected Coordinate neighbor_from_key(int keyCode) {
-    int next_x = get_position().get_x();
-    int next_y = get_position().get_y();
+    int next_x = get_position().get_tile_x();
+    int next_y = get_position().get_tile_y();
     
     if (keyCode == UP) { next_y--; }
     if (keyCode == DOWN) { next_y++; }
